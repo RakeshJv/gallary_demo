@@ -27,7 +27,6 @@ class Home extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
   final String title;
 
   @override
@@ -48,30 +47,15 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
-
     service =NetworkService();
     _connectivity.initialise();
-    _connectivity.myStream.listen((source) {
+    _connectivity.myStream.listen((source)
+    {
       setState(() => _source = source);
     });
-   _loadMore(AppString.BASE_URL+NetworkApi.API_PHOTO_GALLARY_FEED);
+   _loadData(AppString.BASE_URL+NetworkApi.API_PHOTO_GALLARY_FEED);
   }
 
-  void _loadMore(String url)
-  {
-      _isLoading = true;
-      service.loadData(url).then((value)
-      {
-      personList.addAll(value);
-      pageNumber++;
-      _isLoading =false;
-      setState(()
-      {
-
-      });
-    }
-    );
-  }
   @override
   Widget build(BuildContext context) {
     String string="";
@@ -96,13 +80,12 @@ class _MyHomePageState extends State<MyHomePage>
         gridDelegate:
         SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         itemBuilder: (BuildContext context, int index)
-
         {
           if (index >= personList.length)
           {
              if (!_isLoading)
             {
-              _loadMore(AppString.BASE_URL+NetworkApi.API_PHOTO_GALLARY_FEED_BY_PAGE+pageNumber.toString());
+              _loadData(AppString.BASE_URL+NetworkApi.API_PHOTO_GALLARY_FEED_BY_PAGE+pageNumber.toString());
             }
             return Center(
                            child: SizedBox(
@@ -122,7 +105,23 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 
-  gridClicked(BuildContext context, Person elementAt)
+
+  void _loadData(String url)
+  {
+    _isLoading = true;
+    service.loadData(url).then((value)
+    {
+      personList.addAll(value);
+      pageNumber++;
+      _isLoading =false;
+      setState(()
+      {
+
+      });
+    }
+    );
+  }
+ void gridClicked(BuildContext context, Person elementAt)
   {
     print(elementAt.title);
     Navigator.push(
@@ -130,7 +129,8 @@ class _MyHomePageState extends State<MyHomePage>
       MaterialPageRoute(builder: (context) => PersonExplorer(url:AppString.BASE_URL+elementAt.path)),
     );
 
-
   }
+
+
 }
 
